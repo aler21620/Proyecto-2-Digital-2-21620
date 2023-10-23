@@ -7,7 +7,7 @@
 //*****************************************************************************
 // Librerías
 //*****************************************************************************
-/*#include <Arduino.h>
+#include <Arduino.h>
 #include "driver/ledc.h"
 #include "esp_adc_cal.h"
 
@@ -15,6 +15,7 @@
 //  Definición de pines
 //*****************************************************************************
 #define SensorPulso 35
+#define led 18
 #define pwmChannel 0
 #define ledRChannel 1
 #define ledGChannel 2
@@ -39,17 +40,27 @@ void pulso(void);
 int Sensor_Raw = 0;
 float Sensor1 = 0.0;
 float voltaje =0.0; 
+int sensorValue = 0;
+int prevSensorValue = 0;
+bool pulseDetected = false;
+unsigned long lastBeatTime = 0;
+float bpm = 0;
+//float factor = 0.75; 
+//float maximo = 0.0; 
+//int minimoEntreLatidos = 300; 
+//float valorAnterior = 500; 
+//int latidos = 0; 
 
-esp_adc_cal_characteristics_t adc_chars;
+//esp_adc_cal_characteristics_t adc_chars;
 
-// Definición de variables globales
+/*// Definición de variables globales
 int Sensor_Raw = 0;
 float Sensor1 = 0.0;
 float voltaje = 0.0;
 
 // Variables para el cálculo del pulso
 unsigned long lastPulseTime = 0;
-int pulseCount = 0;
+int pulseCount = 0;*/
 
 //*****************************************************************************
 // Configuración
@@ -57,8 +68,10 @@ int pulseCount = 0;
 void setup()
 {
   //configurarPWM();
-  esp_adc_cal_value_t val_type = esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 1100, &adc_chars);
+  //esp_adc_cal_value_t val_type = esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 1100, &adc_chars);
+  pinMode(led, OUTPUT);
   Serial.begin(115200);
+  Serial.println("Iniciando las mediciones: ");
 }
 
 //*****************************************************************************
@@ -73,7 +86,7 @@ void loop()
 //*****************************************************************************
 // Funciones
 //*****************************************************************************
-/*uint32_t readADC_Cal(int ADC_Raw)
+uint32_t readADC_Cal(int ADC_Raw)
 {
   esp_adc_cal_characteristics_t adc_chars;
   esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 1100, &adc_chars);
@@ -94,23 +107,65 @@ void configurarPWM(void)
   ledcAttachPin(pinLedG, ledGChannel);
   ledcAttachPin(pinLedB, ledBChannel);
 }
-/*
-void pulso(void)
-{
-  // Leer el pin LM35_Sensor1 ADC
+
+void pulso(void) {
+// Leer el pin LM35_Sensor1 ADC
   Sensor_Raw = analogRead(SensorPulso);
   // Calibrar ADC y tomar el voltaje en mV
   voltaje = readADC_Cal(Sensor_Raw);
-  // TempC = función con respecto al voltaje
-  Sensor1 = ((voltaje / 4095) * 3.25) / 0.01; // De ser necesario se multiplica por un factor para que lea correctamente el pulso
+  Sensor1 = 140/(voltaje/1000); // De ser necesario se multiplica por un factor para que lea correctamente el pulso
 
   // Imprimir las lecturas, para saber si el sensor funciona
   Serial.print("♥ Tu pulso es:  ");
   Serial.print(Sensor1);
   Serial.print(" BPM ♥ \n");
+  Serial.println(voltaje);
+  Serial.println(Sensor_Raw);
 }
 
+/*void pulso(void) {
+  // Leer el pin LM35_Sensor1 ADC
+  Sensor_Raw = analogRead(SensorPulso);
+  // Calibrar ADC y tomar el voltaje en mV
+  voltaje = readADC_Cal(Sensor_Raw);
+  Sensor1 = 60/(voltaje/1000); // De ser necesario se multiplica por un factor para que lea correctamente el pulso
 
+  // Imprimir las lecturas, para saber si el sensor funciona
+  Serial.print("♥ Tu pulso es:  ");
+  Serial.print(Sensor1);
+  Serial.print(" BPM ♥ \n");
+  Serial.println(voltaje);
+  Serial.println(Sensor_Raw);
+  /*static unsigned long tiempoLPM = millis(); 
+  static unsigned long entreLatidos = millis(); 
+
+  float valorFiltrado = factor * valorAnterior + (1 - factor) * Sensor_Raw; //Filtro pasa bajas
+  float cambio = valorFiltrado - valorAnterior; 
+  valorAnterior = valorFiltrado;
+
+  if((cambio>= maximo) && (millis() > entreLatidos + minimoEntreLatidos)) {
+    maximo = cambio; 
+    digitalWrite(led, HIGH); 
+    entreLatidos = millis(); 
+    latidos++; 
+  } else { 
+    digitalWrite(led, LOW); 
+  }
+
+  maximo = maximo*0.97; 
+
+  if (millis() >= tiempoLPM + 15000) {
+    Serial.print("♥ Tu pulso es:  ");
+    Serial.print(latidos*4);
+    Serial.print(" BPM ♥ \n");
+    latidos = 0; 
+    tiempoLPM = millis(); 
+  }
+
+  delay(50);
+}*/
+
+/*
 uint32_t readADC_Cal(int ADC_Raw) {
   return esp_adc_cal_raw_to_voltage(ADC_Raw, &adc_chars);
 }
@@ -146,7 +201,7 @@ bool detectarPulso(float voltage) {
 
 int calcularBPM() {
   return (pulseCount * 30000) / (millis() - lastPulseTime);
-}*/
+}
 
 #include <Arduino.h>
 #define SensorPulso 35
@@ -206,4 +261,4 @@ void setup() {
 void loop() {
   pulso();
   delay(1000); // Puedes ajustar el retardo según tus necesidades
-}
+}*/
