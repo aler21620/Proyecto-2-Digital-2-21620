@@ -14,6 +14,7 @@
 #define boton2 PUSH2 //Definición del botón 2 para la variable de contador
 #define RX_2 PD6 //Para comunicación serial con ESP32
 #define TX_2 PD7 //Para comunicación serial con ESP32
+#define buzz 40 //Definición del buzzer 
 
 //*****************************************************************************
 // Prototipos de función
