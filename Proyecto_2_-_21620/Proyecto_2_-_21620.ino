@@ -10,6 +10,7 @@
 #include <stdbool.h>
 #include <TM4C123GH6PM.h>
 #include <SPI.h>
+#include <SD.h>
 #include "inc/hw_ints.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
@@ -28,18 +29,29 @@
 //*****************************************************************************
 //  Definición de pines
 //*****************************************************************************
+//Pines botones
 #define boton1 PUSH1 //Definición del botón para la varibale de contador
 #define boton2 PUSH2 //Definición del botón 2 para la variable de contador
+//Pines comunicación serial
 #define RX_2 PD6 //Para comunicación serial con ESP32
 #define TX_2 PD7 //Para comunicación serial con ESP32
+//Pin buzzer
 #define buzz 40 //Definición del buzzer 
+//Pines pantalla
 #define LCD_RST PD_0 //Definición de pin RESET pantalla SPI
 #define LCD_DC PD_1 //Definición de pin DC pantalla SPI
 #define LCD_CS PA_3 //Definición de pin CS pantalla SPI
+//Pines SD
+#define SCK A2
+#define MOSI A5
+#define MISO A4
+#define CS 32
 
 //*****************************************************************************
 // Prototipos de función
 //*****************************************************************************
+//Prototipos de función SD
+void guardar(String);
 //Prototipos de función que puedo utilizar con la pantalla SPI
 void LCD_Init(void);
 void LCD_CMD(uint8_t cmd);
@@ -58,21 +70,33 @@ void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int 
 //*****************************************************************************
 // Variables Globales
 //*****************************************************************************
-uint8_t contador = 0; //Para almacenar el valor del contador de 0 a 255
+String nombre; //Nombre del archivo que abre o crea
+int temperatura = 0; //Para almacenar el valor de temperatura del sensor del ESP32
 
 //*****************************************************************************
 // Configuración
 //*****************************************************************************
 void setup() {
-  Serial.begin(9600); //Velocidad del monitor serial
+  SPI.setModule(0);
+  Serial.begin(115200); //Velocidad del monitor serial
   Serial.println("Se configuró Serial 0");
-
+ 
   //Comunicación UART2 con el ESP32, Serial (2)
   Serial2.begin(115200); //Velocidad de la comunicación 
 
   pinMode(boton1, INPUT_PULLUP); //Configuración del botón como entrada
   pinMode(boton2, INPUT_PULLUP); //Configuración del botón como entrada
+  pinMode(buzz, OUTPUT); 
 
+  // Inicializa la comunicación con la tarjeta SD
+  if (!SD.begin(CS)) {
+    //Indica que algo pasó y no se inicializó correctamente
+    Serial.println("No se pudo inicializar la tarjeta SD.");
+    return;
+  }
+  //Indica que se inicializó correctamente
+  Serial.println("Tarjeta SD inicializada correctamente."); 
+  
   //EJEMPLO UART 
   //Serial.begin(115200); 
   //Serial2.begin(115200); 
@@ -82,13 +106,24 @@ void setup() {
 // Loop
 //*****************************************************************************
 void loop() {
+  //Boton para leer el dato del sensor
+  int data = digitalRead(boton1);
   //Condiciones para sumar o restar con los botones en la variable contador
-  if (digitalRead(boton1) == LOW) {
-    contador = contador + 1;
+  if (data == LOW) {
+    //Recibir información enviada desde el ESP32
+    while (Serial2.available()) { 
+      temperatura = Serial2.parseInt(); //Leer el dato de temperatura enviado
+      String datos = Serial2.readStringUntil('\n'); //Leer el dato enviado desde el ESP32
+      Serial.print("\n 🌡Tu temperatura actual es: "); //Imprimir en el monitor serial los datos del led rojo
+      Serial.print(temperatura); //Imprimir en el monitor el valor del led rojo 
+      Serial.print("  °C 🌡️\n");
+    }
+  //falta agregar tono del buzzer 
   }
 
   if (digitalRead(boton2) == LOW) {
-    contador = contador - 1;
+    guardar("nuevo_dibujo.txt");
+    delay(250);
   }
   delay(100);
 
@@ -99,15 +134,6 @@ void loop() {
   Serial2.println(contador); //Enviar valor del led verde al ESP32
   delay(250);
 
-  //Recibir información enviada desde el ESP32
-  while (Serial2.available()) { 
-    uint8_t voltaje1 = Serial2.parseInt(); //Definir variable donde se almacenará el dato 
-    String datos = Serial2.readStringUntil('\n'); //Leer el dato enviado desde el ESP32
-    Serial.print("\n Rojo: "); //Imprimir en el monitor serial los datos del led rojo
-    Serial.print(voltaje1); //Imprimir en el monitor el valor del led rojo 
-    analogWrite(rojo, voltaje1); //Asignar el valor al brillo del led rojo 
-  }
-
   //EJEMPLO UART
   //if (Serial2.available()) {
   //int inByte
@@ -116,3 +142,21 @@ void loop() {
 //*****************************************************************************
 // Funciones
 //*****************************************************************************
+//Función para guardar el dato en la memoria SD
+void guardar(String nombre) {
+  File archivo = SD.open("prueba.txt", FILE_WRITE);
+
+  if (archivo) {
+    for (int i = 0; i < altura; i++) {
+      for (int j = 0; j < ancho; j++) {
+        archivo.print(imagen[i][j]);
+      }
+      archivo.println();
+    }
+
+    archivo.close();
+    Serial.println("Imagen guardada correctamente en " + nombre);
+  } else {
+    Serial.println("No se pudo abrir el archivo para escritura.");
+  }
+}

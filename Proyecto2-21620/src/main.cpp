@@ -35,8 +35,6 @@ float voltaje =0.0;
 // Configuración
 //*****************************************************************************
 void setup() {
-  //esp_adc_cal_value_t val_type = esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 1100, &adc_chars);
-  pinMode(led, OUTPUT);
   //Comunicación UART0 con la computadora Serial (0)
   Serial.begin(115200);
   Serial.println("Iniciando las mediciones: ");
