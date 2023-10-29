@@ -97,10 +97,6 @@ void setup() {
   }
   //Indica que se inicializó correctamente
   Serial.println("Tarjeta SD inicializada correctamente."); */
-  
-  //EJEMPLO UART 
-  //Serial.begin(115200); 
-  //Serial2.begin(115200); 
 }
 
 //*****************************************************************************
@@ -111,6 +107,7 @@ void loop() {
   int data = digitalRead(boton1);
   //Condiciones para sumar o restar con los botones en la variable contador
   if (data == LOW) {
+    //Envío de un entero a ESP32 para que el microcontrolador sepa que debe enviar la última lectura
     Serial2.println('1');
   }
 
@@ -126,10 +123,6 @@ void loop() {
     delay(250);
   }
   delay(100);
-
-  //EJEMPLO UART
-  //if (Serial2.available()) {
-  //int inByte
 }
 
 //*****************************************************************************
