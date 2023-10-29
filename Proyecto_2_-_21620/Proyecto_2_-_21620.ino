@@ -72,7 +72,7 @@ void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int 
 // Variables Globales
 //*****************************************************************************
 String nombre; //Nombre del archivo que abre o crea
-int temperatura = 0; //Para almacenar el valor de temperatura del sensor del ESP32
+float temp; //Para almacenar el valor de temperatura del sensor del ESP32
 
 //*****************************************************************************
 // Configuración
@@ -111,17 +111,14 @@ void loop() {
   int data = digitalRead(boton1);
   //Condiciones para sumar o restar con los botones en la variable contador
   if (data == LOW) {
-    //Recibir información enviada desde el ESP32
-    while (Serial2.available()) { 
-      temperatura = Serial2.parseInt(); //Leer el dato de temperatura enviado
-      Serial2.print("\n 🌡Tu temperatura actual es: "); //Imprimir en el monitor serial los datos del led rojo
-      Serial2.print(temperatura); //Imprimir en el monitor el valor del led rojo 
-      Serial2.print("  °C 🌡️\n");
-      Serial.print("\n 🌡Tu temperatura actual es: "); //Imprimir en el monitor serial los datos del led rojo
-      Serial.print(temperatura); //Imprimir en el monitor el valor del led rojo 
-      Serial.print("  °C 🌡️\n");
-    }
-  //falta agregar tono del buzzer 
+    Serial2.println('1');
+  }
+
+  if(Serial2.available() > 0) {
+    temp = Serial2.parseFloat();
+    Serial.print("\n 🌡Tu temperatura actual es: ");
+    Serial.print(temp);
+    Serial.print("  °C 🌡\n");
   }
 
   if (digitalRead(boton2) == LOW) {

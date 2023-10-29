@@ -28,8 +28,10 @@ void temperatura(void);
 // Variables Globales
 //*****************************************************************************
 int Sensor_Raw = 0;
-float Sensor1 = 0.0;
 float voltaje =0.0; 
+float Sensor1 = 0.0;
+float temp;
+int senal;
 
 //*****************************************************************************
 // Configuración
@@ -49,16 +51,19 @@ void setup() {
 // Loop
 //*****************************************************************************
 void loop() {
-  temperatura();
+  // Recibir datos de la TIVA C para colocar en la LCD
+  if (Serial2.available()) {
+    senal = Serial2.read();
+  }
 
-  //Recibir datos de la TIVA C para colocar en la LCD
-  while (Serial2.available()) {
-    String datos = Serial2.readStringUntil('\n'); //Leer los datos enviados desde TIVA C
-    //Enviar datos del potenciómetro 1 a TIVA C
-    Serial.println(datos);
-    Serial.print("🌡️ Tu temperatura actual es:   ");
-    Serial.print(Sensor1);
-    Serial.print("  °C 🌡️\n");
+  if(senal == '1') {
+    temperatura();
+    temp = Sensor1;
+    Serial2.println(temp);
+    Serial.print("\n Dato enviado a TIVA C: ");
+    Serial.print(temp);
+    Serial.print("°C 🌡️ \n");
+    senal = 0; 
   }
 
   //EJEMPLO UART 
@@ -88,9 +93,4 @@ void temperatura(void) {
   // Calibrar ADC y tomar el voltaje en mV
   voltaje = readADC_Cal(Sensor_Raw);
   Sensor1 = ((voltaje/4095)*3.25)/0.01; // De ser necesario se multiplica por un factor para que lea correctamente la temperatura
-
-  // Imprimir las lecturas, para saber si el sensor funciona
-  Serial2.print("🌡️ Tu temperatura actual es:   ");
-  Serial2.print(Sensor1);
-  Serial2.print("  °C 🌡️\n");
 }
