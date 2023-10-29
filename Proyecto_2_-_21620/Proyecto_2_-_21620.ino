@@ -7,10 +7,10 @@
 // Librerías
 //*****************************************************************************
 #include <SPI.h>
+#include <SD.h>
 /*#include <stdint.h>
 #include <stdbool.h>
 #include <TM4C123GH6PM.h>
-#include <SD.h>
 #include "inc/hw_ints.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
@@ -41,12 +41,12 @@
 //Pines pantalla
 #define LCD_RST PD_0 //Definición de pin RESET pantalla SPI
 #define LCD_DC PD_1 //Definición de pin DC pantalla SPI
-#define LCD_CS PA_3 //Definición de pin CS pantalla SPI
+#define LCD_CS PA_3 //Definición de pin CS pantalla SPI*/
 //Pines SD
 #define SCK A2
 #define MOSI A5
 #define MISO A4
-#define CS 32*/
+#define CS 32
 
 //*****************************************************************************
 // Prototipos de función
@@ -91,14 +91,14 @@ void setup() {
   pinMode(boton2, INPUT_PULLUP); //Configuración del botón como entrada
   pinMode(buzz, OUTPUT); 
 
-  /*// Inicializa la comunicación con la tarjeta SD
+  // Inicializa la comunicación con la tarjeta SD
   if (!SD.begin(CS)) {
     //Indica que algo pasó y no se inicializó correctamente
     Serial.println("No se pudo inicializar la tarjeta SD.");
     return;
   }
   //Indica que se inicializó correctamente
-  Serial.println("Tarjeta SD inicializada correctamente."); */
+  Serial.println("Tarjeta SD inicializada correctamente.");
 }
 
 //*****************************************************************************
@@ -132,8 +132,17 @@ void loop() {
   }
 
   if (digitalRead(boton2) == LOW) {
-    //guardar("nuevo_dibujo.txt");
+    guardar("Sensor.txt");
     delay(250);
+    tone(buzz, 49);
+    delay(500); 
+    noTone(buzz);
+    tone(buzz, 349);
+    delay(500); 
+    noTone(buzz);
+    tone(buzz, 330);
+    delay(500); 
+    noTone(buzz);
   }
   delay(100);
 }
@@ -141,21 +150,18 @@ void loop() {
 //*****************************************************************************
 // Funciones
 //*****************************************************************************
-/*//Función para guardar el dato en la memoria SD
+//Función para guardar el dato en la memoria SD
 void guardar(String nombre) {
-  File archivo = SD.open("prueba.txt", FILE_WRITE);
+  File archivo = SD.open("Sensor.txt", FILE_WRITE);
 
   if (archivo) {
-    for (int i = 0; i < altura; i++) {
-      for (int j = 0; j < ancho; j++) {
-        archivo.print(imagen[i][j]);
-      }
-      archivo.println();
-    }
-
+    archivo.print("🌡Tu temperatura actual es: ");
+    archivo.print(temp);
+    archivo.print("  °C 🌡");
+    archivo.println();
     archivo.close();
-    Serial.println("Imagen guardada correctamente en " + nombre);
+    Serial.println("Datos de temperatura registrados correctamente en la SD");
   } else {
-    Serial.println("No se pudo abrir el archivo para escritura.");
+    Serial.println("No se pudo abrir el archivo para guardar datos.");
   }
-}*/
+}
