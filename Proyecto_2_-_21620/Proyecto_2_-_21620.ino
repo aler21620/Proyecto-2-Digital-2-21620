@@ -85,7 +85,7 @@ void setup() {
   Serial.println("Se configuró Serial 0");
  
   //Comunicación UART2 con el ESP32, Serial (2)
-  Serial2.begin(115200); //Velocidad de la comunicación 
+  Serial1.begin(115200); //Velocidad de la comunicación 
 
   pinMode(boton1, INPUT_PULLUP); //Configuración del botón como entrada
   pinMode(boton2, INPUT_PULLUP); //Configuración del botón como entrada
@@ -110,9 +110,9 @@ void loop() {
   //Condiciones para sumar o restar con los botones en la variable contador
   if (data == LOW) {
     //Envío de un entero a ESP32 para que el microcontrolador sepa que debe enviar la última lectura
-    Serial2.println('1');
-    if(Serial2.available() > 0) {
-      temp = Serial2.parseFloat();
+    Serial1.println('1');
+    if(Serial1.available() > 0) {
+      temp = Serial1.parseFloat();
       Serial.print("\n 🌡Tu temperatura actual es: ");
       Serial.print(temp);
       Serial.print("  °C 🌡\n");

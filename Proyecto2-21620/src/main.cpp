@@ -40,7 +40,7 @@ void setup() {
   //Comunicación UART0 con la computadora Serial (0)
   Serial.begin(115200);
   Serial.println("Se configuró Serial 0");
-  Serial2.begin(115200, SERIAL_8N1, RX_2, TX_2); //Establecer comunicación serial con TIVA
+  Serial1.begin(115200, SERIAL_8N1, RX_2, TX_2); //Establecer comunicación serial con TIVA
 }
 
 //*****************************************************************************
@@ -48,14 +48,14 @@ void setup() {
 //*****************************************************************************
 void loop() {
   // Recibir datos de la TIVA C para colocar en la LCD
-  if (Serial2.available()) {
-    senal = Serial2.read();
+  if (Serial1.available()) {
+    senal = Serial1.read();
   }
 
   if(senal == '1') {
     temperatura();
     temp = Sensor1;
-    Serial2.println(temp);
+    Serial1.println(temp);
     Serial.print("\n Dato enviado a TIVA C: ");
     Serial.print(temp);
     Serial.print("°C 🌡️ \n");
