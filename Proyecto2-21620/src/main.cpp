@@ -37,14 +37,9 @@ float voltaje =0.0;
 void setup() {
   //Comunicación UART0 con la computadora Serial (0)
   Serial.begin(115200);
-  Serial.println("Iniciando las mediciones: ");
-
-  Serial.begin(115200); //Velocidad del ESP32
   Serial.println("Se configuró Serial 0");
 
   Serial2.begin(115200, SERIAL_8N1, RX_2, TX_2); //Establecer comunicación serial con TIVA
-
-
   //Ejemplo UART 
   //Serial.begin(115200);
   //Serial2.begin(115200);
