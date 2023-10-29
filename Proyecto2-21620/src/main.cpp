@@ -23,6 +23,7 @@
 // Prototipos de función
 //*****************************************************************************
 uint32_t readADC_Cal(int ADC_Raw);
+void temperatura(void);
 
 //*****************************************************************************
 // Variables Globales
@@ -96,7 +97,7 @@ void temperatura(void) {
   Sensor_Raw = analogRead(SensorTemp);
   // Calibrar ADC y tomar el voltaje en mV
   voltaje = readADC_Cal(Sensor_Raw);
-  Sensor1 = 60/(voltaje/1000); // De ser necesario se multiplica por un factor para que lea correctamente el pulso
+  Sensor1 = ((voltaje/4095)*3.25)/0.01; // De ser necesario se multiplica por un factor para que lea correctamente la temperatura
 
   // Imprimir las lecturas, para saber si el sensor funciona
   Serial.print("♥ Tu pulso es:  ");
