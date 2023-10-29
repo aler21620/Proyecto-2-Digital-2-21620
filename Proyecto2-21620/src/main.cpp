@@ -17,7 +17,6 @@
 #define SensorTemp 35 //Sensor del proyecto 
 #define RX_2 16 //Para comunicación serial con TIVA
 #define TX_2 17 //Para comunicación serial con TIVA
-#define led 18
 
 //*****************************************************************************
 // Prototipos de función
