@@ -130,7 +130,7 @@ void loop() {
   }
 
   if (digitalRead(boton2) == LOW) {
-    guardar("Sensor.txt");
+    //guardar("Sensor.txt");
     delay(250);
     tone(buzz, 49);
     delay(500); 
