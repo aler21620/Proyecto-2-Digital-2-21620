@@ -57,6 +57,7 @@ void setup() {
 // Loop
 //*****************************************************************************
 void loop() {
+  temperatura();
   delay(1000);
 
 
@@ -100,9 +101,7 @@ void temperatura(void) {
   Sensor1 = ((voltaje/4095)*3.25)/0.01; // De ser necesario se multiplica por un factor para que lea correctamente la temperatura
 
   // Imprimir las lecturas, para saber si el sensor funciona
-  Serial.print("♥ Tu pulso es:  ");
+  Serial.print("🌡️ Tu temperatura actual es:   ");
   Serial.print(Sensor1);
-  Serial.print(" BPM ♥ \n");
-  Serial.println(voltaje);
-  Serial.println(Sensor_Raw);
+  Serial.print("  °C 🌡️\n");
 }
