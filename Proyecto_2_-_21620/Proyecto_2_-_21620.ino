@@ -73,6 +73,8 @@ void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int 
 //*****************************************************************************
 String nombre; //Nombre del archivo que abre o crea
 float temp; //Para almacenar el valor de temperatura del sensor del ESP32
+int numTones = 10;
+int tones[] = {261, 277, 294, 311, 330, 349, 370, 392, 415, 440};
 
 //*****************************************************************************
 // Configuración
@@ -109,13 +111,24 @@ void loop() {
   if (data == LOW) {
     //Envío de un entero a ESP32 para que el microcontrolador sepa que debe enviar la última lectura
     Serial2.println('1');
-  }
-
-  if(Serial2.available() > 0) {
-    temp = Serial2.parseFloat();
-    Serial.print("\n 🌡Tu temperatura actual es: ");
-    Serial.print(temp);
-    Serial.print("  °C 🌡\n");
+    if(Serial2.available() > 0) {
+      temp = Serial2.parseFloat();
+      Serial.print("\n 🌡Tu temperatura actual es: ");
+      Serial.print(temp);
+      Serial.print("  °C 🌡\n");
+    }
+    tone(buzz, 349);
+    delay(500); 
+    noTone(buzz);
+    tone(buzz, 523);
+    delay(500); 
+    noTone(buzz);
+    tone(buzz, 349);
+    delay(500); 
+    noTone(buzz);
+    tone(buzz, 330);
+    delay(500); 
+    noTone(buzz);
   }
 
   if (digitalRead(boton2) == LOW) {
