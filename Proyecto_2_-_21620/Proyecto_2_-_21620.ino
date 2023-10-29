@@ -73,8 +73,6 @@ void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int 
 //*****************************************************************************
 String nombre; //Nombre del archivo que abre o crea
 float temp; //Para almacenar el valor de temperatura del sensor del ESP32
-int numTones = 10;
-int tones[] = {261, 277, 294, 311, 330, 349, 370, 392, 415, 440};
 
 //*****************************************************************************
 // Configuración
@@ -85,7 +83,7 @@ void setup() {
   Serial.println("Se configuró Serial 0");
  
   //Comunicación UART2 con el ESP32, Serial (2)
-  Serial1.begin(115200); //Velocidad de la comunicación 
+  Serial2.begin(115200); //Velocidad de la comunicación 
 
   pinMode(boton1, INPUT_PULLUP); //Configuración del botón como entrada
   pinMode(boton2, INPUT_PULLUP); //Configuración del botón como entrada
@@ -110,9 +108,9 @@ void loop() {
   //Condiciones para sumar o restar con los botones en la variable contador
   if (data == LOW) {
     //Envío de un entero a ESP32 para que el microcontrolador sepa que debe enviar la última lectura
-    Serial1.println('1');
-    if(Serial1.available() > 0) {
-      temp = Serial1.parseFloat();
+    Serial2.println('1');
+    if(Serial2.available() > 0) {
+      temp = Serial2.parseFloat();
       Serial.print("\n 🌡Tu temperatura actual es: ");
       Serial.print(temp);
       Serial.print("  °C 🌡\n");
