@@ -50,18 +50,15 @@ void setup() {
 //*****************************************************************************
 void loop() {
   temperatura();
-  delay(1000);
 
-
-  //Enviar datos del potenciómetro 1 a TIVA C
-  Serial2.println("\n Valor Sensor: "); 
-  Serial2.println(Sensor1);
-  
   //Recibir datos de la TIVA C para colocar en la LCD
   while (Serial2.available()) {
-    uint8_t voltaje2 = Serial2.parseInt(); //Definir variables donde se almacenará cada dato 
-    uint8_t contador = Serial2.parseInt(); 
     String datos = Serial2.readStringUntil('\n'); //Leer los datos enviados desde TIVA C
+    //Enviar datos del potenciómetro 1 a TIVA C
+    Serial.println(datos);
+    Serial.print("🌡️ Tu temperatura actual es:   ");
+    Serial.print(Sensor1);
+    Serial.print("  °C 🌡️\n");
   }
 
   //EJEMPLO UART 
@@ -93,7 +90,7 @@ void temperatura(void) {
   Sensor1 = ((voltaje/4095)*3.25)/0.01; // De ser necesario se multiplica por un factor para que lea correctamente la temperatura
 
   // Imprimir las lecturas, para saber si el sensor funciona
-  Serial.print("🌡️ Tu temperatura actual es:   ");
-  Serial.print(Sensor1);
-  Serial.print("  °C 🌡️\n");
+  Serial2.print("🌡️ Tu temperatura actual es:   ");
+  Serial2.print(Sensor1);
+  Serial2.print("  °C 🌡️\n");
 }

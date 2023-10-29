@@ -6,10 +6,10 @@
 //*****************************************************************************
 // Librerías
 //*****************************************************************************
-#include <stdint.h>
+#include <SPI.h>
+/*#include <stdint.h>
 #include <stdbool.h>
 #include <TM4C123GH6PM.h>
-#include <SPI.h>
 #include <SD.h>
 #include "inc/hw_ints.h"
 #include "inc/hw_memmap.h"
@@ -24,7 +24,7 @@
 
 #include "bitmaps.h"
 #include "font.h"
-#include "lcd_registers.h"
+#include "lcd_registers.h"*/
 
 //*****************************************************************************
 //  Definición de pines
@@ -37,6 +37,7 @@
 #define TX_2 PD7 //Para comunicación serial con ESP32
 //Pin buzzer
 #define buzz 40 //Definición del buzzer 
+/*
 //Pines pantalla
 #define LCD_RST PD_0 //Definición de pin RESET pantalla SPI
 #define LCD_DC PD_1 //Definición de pin DC pantalla SPI
@@ -45,12 +46,12 @@
 #define SCK A2
 #define MOSI A5
 #define MISO A4
-#define CS 32
+#define CS 32*/
 
 //*****************************************************************************
 // Prototipos de función
 //*****************************************************************************
-//Prototipos de función SD
+/*//Prototipos de función SD
 void guardar(String);
 //Prototipos de función que puedo utilizar con la pantalla SPI
 void LCD_Init(void);
@@ -65,7 +66,7 @@ void FillRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, un
 void LCD_Print(String text, int x, int y, int fontSize, int color, int background);
 
 void LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]);
-void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int columns, int index, char flip, char offset);
+void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int columns, int index, char flip, char offset);*/
 
 //*****************************************************************************
 // Variables Globales
@@ -88,14 +89,14 @@ void setup() {
   pinMode(boton2, INPUT_PULLUP); //Configuración del botón como entrada
   pinMode(buzz, OUTPUT); 
 
-  // Inicializa la comunicación con la tarjeta SD
+  /*// Inicializa la comunicación con la tarjeta SD
   if (!SD.begin(CS)) {
     //Indica que algo pasó y no se inicializó correctamente
     Serial.println("No se pudo inicializar la tarjeta SD.");
     return;
   }
   //Indica que se inicializó correctamente
-  Serial.println("Tarjeta SD inicializada correctamente."); 
+  Serial.println("Tarjeta SD inicializada correctamente."); */
   
   //EJEMPLO UART 
   //Serial.begin(115200); 
@@ -113,7 +114,9 @@ void loop() {
     //Recibir información enviada desde el ESP32
     while (Serial2.available()) { 
       temperatura = Serial2.parseInt(); //Leer el dato de temperatura enviado
-      String datos = Serial2.readStringUntil('\n'); //Leer el dato enviado desde el ESP32
+      Serial2.print("\n 🌡Tu temperatura actual es: "); //Imprimir en el monitor serial los datos del led rojo
+      Serial2.print(temperatura); //Imprimir en el monitor el valor del led rojo 
+      Serial2.print("  °C 🌡️\n");
       Serial.print("\n 🌡Tu temperatura actual es: "); //Imprimir en el monitor serial los datos del led rojo
       Serial.print(temperatura); //Imprimir en el monitor el valor del led rojo 
       Serial.print("  °C 🌡️\n");
@@ -122,17 +125,10 @@ void loop() {
   }
 
   if (digitalRead(boton2) == LOW) {
-    guardar("nuevo_dibujo.txt");
+    //guardar("nuevo_dibujo.txt");
     delay(250);
   }
   delay(100);
-
-  analogWrite(verde, contador); //Asignar el valor al brillo del led verde
-  Serial2.println("\n Azul"); //Enviar información sobre led azul al ESP32
-  Serial2.println(voltaje2); //Enviar valor del led azul al ESP32
-  Serial2.println("\n Verde"); //Enviar información sobre led verde al ESP32
-  Serial2.println(contador); //Enviar valor del led verde al ESP32
-  delay(250);
 
   //EJEMPLO UART
   //if (Serial2.available()) {
@@ -142,7 +138,7 @@ void loop() {
 //*****************************************************************************
 // Funciones
 //*****************************************************************************
-//Función para guardar el dato en la memoria SD
+/*//Función para guardar el dato en la memoria SD
 void guardar(String nombre) {
   File archivo = SD.open("prueba.txt", FILE_WRITE);
 
@@ -159,4 +155,4 @@ void guardar(String nombre) {
   } else {
     Serial.println("No se pudo abrir el archivo para escritura.");
   }
-}
+}*/
