@@ -43,10 +43,10 @@
 #define LCD_DC PD_1 //Definición de pin DC pantalla SPI
 #define LCD_CS PA_3 //Definición de pin CS pantalla SPI*/
 //Pines SD
-#define SCK A2
-#define MOSI A5
-#define MISO A4
-#define CS 32
+//#define SCK A2
+//#define MOSI A5
+//#define MISO A4
+#define CS 12
 
 //*****************************************************************************
 // Prototipos de función
@@ -130,7 +130,7 @@ void loop() {
   }
 
   if (digitalRead(boton2) == LOW) {
-    //guardar("Sensor.txt");
+    guardar("Sensor.txt");
     delay(250);
     tone(buzz, 49);
     delay(500); 
