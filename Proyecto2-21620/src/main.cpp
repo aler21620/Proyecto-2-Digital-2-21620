@@ -56,7 +56,7 @@ void loop() {
     temperatura();
     temp = Sensor1;
     Serial2.println(temp);
-    Serial.print("\n Dato enviado a TIVA C: ");
+    Serial.print("Dato enviado a TIVA C: ");
     Serial.print(temp);
     Serial.print("°C 🌡️ \n");
     senal = 0; 

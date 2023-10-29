@@ -111,7 +111,7 @@ void loop() {
     Serial2.println('1');
     if(Serial2.available() > 0) {
       temp = Serial2.parseFloat();
-      Serial.print("\n 🌡Tu temperatura actual es: ");
+      Serial.print("🌡Tu temperatura actual es: ");
       Serial.print(temp);
       Serial.print("  °C 🌡\n");
     }
@@ -132,13 +132,25 @@ void loop() {
   if (digitalRead(boton2) == LOW) {
     guardar("Sensor.txt");
     delay(250);
-    tone(buzz, 49);
+    tone(buzz, 494);
     delay(500); 
     noTone(buzz);
-    tone(buzz, 349);
+    tone(buzz, 494);
     delay(500); 
     noTone(buzz);
-    tone(buzz, 330);
+    tone(buzz, 440);
+    delay(500); 
+    noTone(buzz);
+    tone(buzz, 392);
+    delay(500); 
+    noTone(buzz);
+    tone(buzz, 440);
+    delay(500); 
+    noTone(buzz);
+    tone(buzz, 494);
+    delay(500); 
+    noTone(buzz);
+    tone(buzz, 392);
     delay(500); 
     noTone(buzz);
   }
