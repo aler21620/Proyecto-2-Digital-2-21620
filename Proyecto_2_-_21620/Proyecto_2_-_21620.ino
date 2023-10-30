@@ -84,28 +84,8 @@ float temp; //Para almacenar el valor de temperatura del sensor del ESP32
 // Configuración
 //*****************************************************************************
 void setup() {
-  //Inicialización pantalla SPI
-  //SysCtlClockSet(SYSCTL_SYSDIV_2_5|SYSCTL_USE_PLL|SYSCTL_OSC_MAIN|SYSCTL_XTAL_16MHZ);
   SPI.setModule(0);
-
-  //Serial.println("Inicio");
-  //LCD_Init();
-  //LCD_Clear(0x00);
-
-  /*FillRect(0, 0, 319, 206, 0x421b);
-  String text1 = "Temperatura actual: ";
-  LCD_Print(text1, 10, 100, 2, 0xffff, 0x421b);
-
-  for(int x = 0; x <319; x++){
-    LCD_Bitmap(x, 52, 16, 16, tile2);
-    LCD_Bitmap(x, 68, 16, 16, tile);
-    
-    LCD_Bitmap(x, 207, 16, 16, tile);
-    LCD_Bitmap(x, 223, 16, 16, tile);
-    x += 15;
- }
-  delay(5000);*/
-  
+   
   Serial.begin(115200); //Velocidad del monitor serial
   Serial.println("Se configuró Serial 0");
  
@@ -124,6 +104,25 @@ void setup() {
   }
   //Indica que se inicializó correctamente
   Serial.println("Tarjeta SD inicializada correctamente.");
+
+  //Inicialización pantalla SPI
+  SysCtlClockSet(SYSCTL_SYSDIV_2_5|SYSCTL_USE_PLL|SYSCTL_OSC_MAIN|SYSCTL_XTAL_16MHZ);
+
+  Serial.println("Inicio");
+  LCD_Init();
+  LCD_Clear(0x00);
+
+  FillRect(0,0, 320, 240,  0x37FC);
+  FillRect(0, 60, 320, 220, 0xFEC6);   
+  FillRect(0,180, 320, 220,  0x37FC);   
+  String text1 = "TEMPERATURA";
+  LCD_Print(text1, 70, 8, 2, 0x1105, 0x37FC); 
+  String text2 = "ACTUAL";
+  LCD_Print(text2, 115, 30, 2, 0x1105, 0x37FC); 
+  String text3 = "ALEJANDRA";
+  LCD_Print(text3, 90, 190, 2, 0x1105, 0x37FC);
+  String text4 = "RODRIGUEZ";
+  LCD_Print(text4, 90, 212, 2, 0x1105, 0x37FC); 
 }
 
 //*****************************************************************************
@@ -202,7 +201,7 @@ void guardar(String nombre) {
     Serial.println("No se pudo abrir el archivo para guardar datos.");
   }
 }
-/*
+
 //***************************************************************************************************************************************
 // Función para inicializar LCD
 //***************************************************************************************************************************************
@@ -515,4 +514,4 @@ void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int 
   }
     }
   digitalWrite(LCD_CS, HIGH);
-}*/
+}
