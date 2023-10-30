@@ -104,7 +104,7 @@ void setup() {
   LCD_Clear(0x00);
 
   FillRect(0,0, 320, 240,  0x37FC);
-  FillRect(0, 60, 320, 220, 0xFEC6);   
+  FillRect(0, 60, 320, 220, 0xF7BD);   
   FillRect(0,180, 320, 220,  0x37FC);   
   String text1 = "TEMPERATURA";
   LCD_Print(text1, 70, 8, 2, 0x1105, 0x37FC); 
@@ -114,6 +114,7 @@ void setup() {
   LCD_Print(text3, 90, 190, 2, 0x1105, 0x37FC);
   String text4 = "RODRIGUEZ";
   LCD_Print(text4, 90, 212, 2, 0x1105, 0x37FC); 
+  LCD_Bitmap(15, 42, 35, 80, termometro); 
 }
 
 //*****************************************************************************
