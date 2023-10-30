@@ -85,14 +85,14 @@ float temp; //Para almacenar el valor de temperatura del sensor del ESP32
 //*****************************************************************************
 void setup() {
   //Inicialización pantalla SPI
-  SysCtlClockSet(SYSCTL_SYSDIV_2_5|SYSCTL_USE_PLL|SYSCTL_OSC_MAIN|SYSCTL_XTAL_16MHZ);
+  //SysCtlClockSet(SYSCTL_SYSDIV_2_5|SYSCTL_USE_PLL|SYSCTL_OSC_MAIN|SYSCTL_XTAL_16MHZ);
   SPI.setModule(0);
 
-  Serial.println("Inicio");
-  LCD_Init();
-  LCD_Clear(0x00);
+  //Serial.println("Inicio");
+  //LCD_Init();
+  //LCD_Clear(0x00);
 
-  FillRect(0, 0, 319, 206, 0x421b);
+  /*FillRect(0, 0, 319, 206, 0x421b);
   String text1 = "Temperatura actual: ";
   LCD_Print(text1, 10, 100, 2, 0xffff, 0x421b);
 
@@ -104,7 +104,7 @@ void setup() {
     LCD_Bitmap(x, 223, 16, 16, tile);
     x += 15;
  }
-  delay(5000);
+  delay(5000);*/
   
   Serial.begin(115200); //Velocidad del monitor serial
   Serial.println("Se configuró Serial 0");
@@ -202,7 +202,7 @@ void guardar(String nombre) {
     Serial.println("No se pudo abrir el archivo para guardar datos.");
   }
 }
-
+/*
 //***************************************************************************************************************************************
 // Función para inicializar LCD
 //***************************************************************************************************************************************
@@ -515,4 +515,4 @@ void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int 
   }
     }
   digitalWrite(LCD_CS, HIGH);
-}
+}*/
