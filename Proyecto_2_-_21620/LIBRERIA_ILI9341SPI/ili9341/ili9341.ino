@@ -94,7 +94,7 @@ void loop() {
     LCD_Sprite(x,100,16,24,planta,2,anim2,0,1);
     V_line( x -1, 100, 24, 0x421b);
     
-    //LCD_Bitmap(x, 100, 32, 32, prueba);
+    LCD_Bitmap(x, 100, 32, 32, prueba);
     
     int anim = (x/11)%8;
     

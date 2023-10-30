@@ -37,15 +37,15 @@
 #define TX_2 PD7 //Para comunicación serial con ESP32
 //Pin buzzer
 #define buzz 40 //Definición del buzzer 
-/*
+
 //Pines pantalla
 #define LCD_RST PD_0 //Definición de pin RESET pantalla SPI
 #define LCD_DC PD_1 //Definición de pin DC pantalla SPI
-#define LCD_CS PA_3 //Definición de pin CS pantalla SPI*/
+#define LCD_CS PA_3 //Definición de pin CS pantalla SPI
 //Pines SD
-//#define SCK A2
-//#define MOSI A5
-//#define MISO A4
+#define SCK A2
+#define MOSI A5
+#define MISO A4
 #define CS 12
 
 //*****************************************************************************
