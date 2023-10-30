@@ -8,7 +8,8 @@
 //*****************************************************************************
 #include <SPI.h>
 #include <SD.h>
-/*#include <stdint.h>
+#include "pitches.h"
+#include <stdint.h>
 #include <stdbool.h>
 #include <TM4C123GH6PM.h>
 #include "inc/hw_ints.h"
@@ -24,7 +25,7 @@
 
 #include "bitmaps.h"
 #include "font.h"
-#include "lcd_registers.h"*/
+#include "lcd_registers.h"
 
 //*****************************************************************************
 //  Definición de pines
@@ -42,6 +43,11 @@
 #define LCD_RST PD_0 //Definición de pin RESET pantalla SPI
 #define LCD_DC PD_1 //Definición de pin DC pantalla SPI
 #define LCD_CS PA_3 //Definición de pin CS pantalla SPI
+// El SPI es el 0
+//MOSI va a PA_5
+//MISO va a PA_4
+//SCK va a PA_2
+
 //Pines SD
 #define SCK A2
 #define MOSI A5
@@ -51,7 +57,7 @@
 //*****************************************************************************
 // Prototipos de función
 //*****************************************************************************
-/*//Prototipos de función SD
+//Prototipos de función SD
 void guardar(String);
 //Prototipos de función que puedo utilizar con la pantalla SPI
 void LCD_Init(void);
@@ -66,7 +72,7 @@ void FillRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, un
 void LCD_Print(String text, int x, int y, int fontSize, int color, int background);
 
 void LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]);
-void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int columns, int index, char flip, char offset);*/
+void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int columns, int index, char flip, char offset);
 
 //*****************************************************************************
 // Variables Globales
@@ -78,7 +84,28 @@ float temp; //Para almacenar el valor de temperatura del sensor del ESP32
 // Configuración
 //*****************************************************************************
 void setup() {
+  //Inicialización pantalla SPI
+  SysCtlClockSet(SYSCTL_SYSDIV_2_5|SYSCTL_USE_PLL|SYSCTL_OSC_MAIN|SYSCTL_XTAL_16MHZ);
   SPI.setModule(0);
+
+  Serial.println("Inicio");
+  LCD_Init();
+  LCD_Clear(0x00);
+
+  FillRect(0, 0, 319, 206, 0x421b);
+  String text1 = "Temperatura actual: ";
+  LCD_Print(text1, 10, 100, 2, 0xffff, 0x421b);
+
+  for(int x = 0; x <319; x++){
+    LCD_Bitmap(x, 52, 16, 16, tile2);
+    LCD_Bitmap(x, 68, 16, 16, tile);
+    
+    LCD_Bitmap(x, 207, 16, 16, tile);
+    LCD_Bitmap(x, 223, 16, 16, tile);
+    x += 15;
+ }
+  delay(5000);
+  
   Serial.begin(115200); //Velocidad del monitor serial
   Serial.println("Se configuró Serial 0");
  
