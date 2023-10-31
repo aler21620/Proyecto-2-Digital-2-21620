@@ -52,7 +52,7 @@
 #define SCK A2
 #define MOSI A5
 #define MISO A4
-#define CS 12
+#define CS 38
 
 //*****************************************************************************
 // Prototipos de función
@@ -64,6 +64,7 @@ void LCD_Init(void);
 void LCD_Clear(unsigned int c);
 void FillRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsigned int c);
 void LCD_Print(String text, int x, int y, int fontSize, int color, int background);
+void LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]);
 
 //*****************************************************************************
 // Variables Globales
@@ -114,7 +115,7 @@ void setup() {
   LCD_Print(text3, 90, 190, 2, 0x1105, 0x37FC);
   String text4 = "RODRIGUEZ";
   LCD_Print(text4, 90, 212, 2, 0x1105, 0x37FC); 
-  LCD_Bitmap(15, 42, 35, 80, termometro); 
+  LCD_Bitmap(30, 70, 35, 80, termometro); 
 }
 
 //*****************************************************************************
@@ -133,6 +134,23 @@ void loop() {
       Serial.print(temp);
       Serial.print("  °C 🌡\n");
     }
+
+    int temperatura = temp * 100;
+    //Se obtiene cada número por separado
+    int unidad = (temperatura/1) %10; 
+    int decena = (temperatura/10) %10; 
+    int decimal = (temperatura/100) %10; 
+    int centena = (temperatura/1000) %10;
+
+    String uni = String(unidad); 
+    String dec = String(decena); 
+    String deci = String(decimal); 
+    String cent = String(centena);
+
+    String tempe = cent + deci + "." + dec + uni; 
+      
+    LCD_Print(tempe, 100, 80, 2, 0x1105, 0xF7BD); 
+    
     tone(buzz, 349);
     delay(500); 
     noTone(buzz);
@@ -298,6 +316,37 @@ void LCD_Init(void) {
 }
 
 //***************************************************************************************************************************************
+// Función para enviar comandos a la LCD - parámetro (comando)
+//***************************************************************************************************************************************
+void LCD_CMD(uint8_t cmd) {
+  digitalWrite(LCD_DC, LOW);
+  SPI.transfer(cmd);
+}
+//***************************************************************************************************************************************
+// Función para enviar datos a la LCD - parámetro (dato)
+//***************************************************************************************************************************************
+void LCD_DATA(uint8_t data) {
+  digitalWrite(LCD_DC, HIGH);
+  SPI.transfer(data);
+}
+//***************************************************************************************************************************************
+// Función para definir rango de direcciones de memoria con las cuales se trabajara (se define una ventana)
+//***************************************************************************************************************************************
+void SetWindows(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2) {
+  LCD_CMD(0x2a); // Set_column_address 4 parameters
+  LCD_DATA(x1 >> 8);
+  LCD_DATA(x1);   
+  LCD_DATA(x2 >> 8);
+  LCD_DATA(x2);   
+  LCD_CMD(0x2b); // Set_page_address 4 parameters
+  LCD_DATA(y1 >> 8);
+  LCD_DATA(y1);   
+  LCD_DATA(y2 >> 8);
+  LCD_DATA(y2);   
+  LCD_CMD(0x2c); // Write_memory_start
+}
+
+//***************************************************************************************************************************************
 // Función para borrar la pantalla - parámetros (color)
 //***************************************************************************************************************************************
 void LCD_Clear(unsigned int c){  
@@ -374,4 +423,111 @@ void LCD_Print(String text, int x, int y, int fontSize, int color, int backgroun
     }
     digitalWrite(LCD_CS, HIGH);
   }
+}
+
+//***************************************************************************************************************************************
+// Función para dibujar una línea horizontal - parámetros ( coordenada x, cordenada y, longitud, color)
+//*************************************************************************************************************************************** 
+void H_line(unsigned int x, unsigned int y, unsigned int l, unsigned int c) {  
+  unsigned int i, j;
+  LCD_CMD(0x02c); //write_memory_start
+  digitalWrite(LCD_DC, HIGH);
+  digitalWrite(LCD_CS, LOW);
+  l = l + x;
+  SetWindows(x, y, l, y);
+  j = l;// * 2;
+  for (i = 0; i < l; i++) {
+      LCD_DATA(c >> 8); 
+      LCD_DATA(c); 
+  }
+  digitalWrite(LCD_CS, HIGH);
+}
+//***************************************************************************************************************************************
+// Función para dibujar una línea vertical - parámetros ( coordenada x, cordenada y, longitud, color)
+//*************************************************************************************************************************************** 
+void V_line(unsigned int x, unsigned int y, unsigned int l, unsigned int c) {  
+  unsigned int i,j;
+  LCD_CMD(0x02c); //write_memory_start
+  digitalWrite(LCD_DC, HIGH);
+  digitalWrite(LCD_CS, LOW);
+  l = l + y;
+  SetWindows(x, y, x, l);
+  j = l; //* 2;
+  for (i = 1; i <= j; i++) {
+    LCD_DATA(c >> 8); 
+    LCD_DATA(c);
+  }
+  digitalWrite(LCD_CS, HIGH);  
+}
+
+//***************************************************************************************************************************************
+// Función para dibujar un rectángulo - parámetros ( coordenada x, cordenada y, ancho, alto, color)
+//***************************************************************************************************************************************
+void Rect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsigned int c) {
+  H_line(x  , y  , w, c);
+  H_line(x  , y+h, w, c);
+  V_line(x  , y  , h, c);
+  V_line(x+w, y  , h, c);
+}
+
+//***************************************************************************************************************************************
+// Función para dibujar una imagen a partir de un arreglo de colores (Bitmap) Formato (Color 16bit R 5bits G 6bits B 5bits)
+//***************************************************************************************************************************************
+void LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]){  
+  LCD_CMD(0x02c); // write_memory_start
+  digitalWrite(LCD_DC, HIGH);
+  digitalWrite(LCD_CS, LOW); 
+  
+  unsigned int x2, y2;
+  x2 = x+width;
+  y2 = y+height;
+  SetWindows(x, y, x2-1, y2-1);
+  unsigned int k = 0;
+  unsigned int i, j;
+
+  for (int i = 0; i < width; i++) {
+    for (int j = 0; j < height; j++) {
+      LCD_DATA(bitmap[k]);
+      LCD_DATA(bitmap[k+1]);
+      //LCD_DATA(bitmap[k]);    
+      k = k + 2;
+     } 
+  }
+  digitalWrite(LCD_CS, HIGH);
+}
+//***************************************************************************************************************************************
+// Función para dibujar una imagen sprite - los parámetros columns = número de imagenes en el sprite, index = cual desplegar, flip = darle vuelta
+//***************************************************************************************************************************************
+void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int columns, int index, char flip, char offset){
+  LCD_CMD(0x02c); // write_memory_start
+  digitalWrite(LCD_DC, HIGH);
+  digitalWrite(LCD_CS, LOW); 
+
+  unsigned int x2, y2;
+  x2 =   x+width;
+  y2=    y+height;
+  SetWindows(x, y, x2-1, y2-1);
+  int k = 0;
+  int ancho = ((width*columns));
+  if(flip){
+  for (int j = 0; j < height; j++){
+      k = (j*(ancho) + index*width -1 - offset)*2;
+      k = k+width*2;
+     for (int i = 0; i < width; i++){
+      LCD_DATA(bitmap[k]);
+      LCD_DATA(bitmap[k+1]);
+      k = k - 2;
+     } 
+  }
+  }else{
+     for (int j = 0; j < height; j++){
+      k = (j*(ancho) + index*width + 1 + offset)*2;
+     for (int i = 0; i < width; i++){
+      LCD_DATA(bitmap[k]);
+      LCD_DATA(bitmap[k+1]);
+      k = k + 2;
+     } 
+  }
+    }
+  digitalWrite(LCD_CS, HIGH);
 }
